@@ -25,8 +25,6 @@ function get_requeststations(fi_stations::String, locchan::Dict, stationlist_fop
 	lines = readlines(fi_stations)
 
 	#---make stationlist---#
-	stationlist_fopath = joinpath(fodir, "request_stations")
-
 	# parse algorithm:
 	# 1. search until encounting #DATACENTER
 	# 2. append stations to the chunc

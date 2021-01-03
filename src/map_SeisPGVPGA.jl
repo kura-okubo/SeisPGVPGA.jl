@@ -31,8 +31,12 @@ function map_seisPGVPGA(startid, InputDict::Dict)
 
 	for src in keys(request_src_chanks)
 	    # replace source name
-	    src=="IRISDMC" && (reqsrc="IRIS")
-	    
+	    if src=="IRISDMC"
+			reqsrc="IRIS"
+		else
+			reqsrc=src
+		end
+
 	    #---download data---#
 	    requeststrs = get_requeststr(request_src_chanks[src], 1) #  request single station by station
 
@@ -69,13 +73,13 @@ function map_seisPGVPGA(startid, InputDict::Dict)
 	         v=$(0), src=$(reqsrc), unscale=$(InputDict["get_data_opt"][1]),
 	          demean=$(InputDict["get_data_opt"][2]), detrend=$(InputDict["get_data_opt"][3]),taper=$(InputDict["get_data_opt"][4]),
 	          ungap=$(InputDict["get_data_opt"][5]), rr=true))
-	        
+
 	        t_dl = @elapsed Stemp = check_and_get_data(ex)
 	        # If download is failed, skip
 	        Stemp == 1 && continue
 	        # If Stemp does not have 3 components, skip
 	        Stemp.n != 3 && continue
-	        
+
 	        # manipulate download_margin
 	        # NOTE: using SeisIO.sync()
 	        stsync = DateTime(starttimelist[startid])
@@ -93,20 +97,20 @@ function map_seisPGVPGA(startid, InputDict::Dict)
 	                end
 	            end
 	        end
-	        
+
 	        #---compute pgv, pga and d_rms---#
 	        pgv, pga, drms_mean = compute_pgvpga_drms(Stemp, InputDict["bp_fmin"], InputDict["bp_fmax"],
 	                                                    InputDict["drms_fmin"], InputDict["drms_fmax"])
-	        
+
 	        #---output result into dat file---#
 	        # dump file
 	        open(joinpath(dir2, varname*".dat"), "w") do io
 	            write(io, "id,starttime,endtime,PGV,PGA,drms_mean\n")
 	            write(io, "$(join([net, sta], ".")), $(s_str), $(e_str), $(pgv), $(pga), $(drms_mean)")
-	        end;        
-	        
+	        end;
+
 	        #---save seisdata---#
-	        if InputDict["save_seisdata"] 
+	        if InputDict["save_seisdata"]
 	            # make hierarchical directory
 	            dir1 = joinpath(InputDict["seisdata_dir"], join([net, sta], ".")) #ex. BP.LCCB..BP1
 	            ts_year = split(split(varname, "__")[2], "-")[1]# start year
