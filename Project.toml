@@ -3,6 +3,17 @@ uuid = "5c9eb482-5d9f-4433-a684-eda60c795573"
 authors = ["kura-okubo"]
 version = "0.1.0"
 
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+SeisIO = "b372bb87-02dd-52bb-bcf6-c30dd83fd342"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
+
 [compat]
 julia = "1"
 

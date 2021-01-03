@@ -5,8 +5,6 @@ Modified from SeisMonitoring.jl(https://github.com/kura-okubo/SeisMonitoring.jl)
 2021.1.3 Kurama Okubo
 """
 
-using SeisIO, JLD2, Dates
-
 """
 	get_requeststations(fi_stations::String, locchan::Dict, stationlist_fopath::String)
 
@@ -14,7 +12,7 @@ return dictionary of request stations.
 
 # Arguments
 - 'fi_stations::String': path to the station list downloaded from IRIS GMAP2 text format.
-- 'locchan::Dict': Dictionary of channel and location. 
+- 'locchan::Dict': Dictionary of channel and location.
 
 e.g. locchan=Dict("BP" => [(*, "BP*")]) requests loc=* and chan=BP* for BP network
 
@@ -230,7 +228,7 @@ Modified from SeismoRMS (https://github.com/ThomasLecocq/SeismoRMS) written by T
 https://github.com/ThomasLecocq/SeismoRMS/blob/master/seismosocialdistancing.py l.256
 """
 function df_rms(P_vel::DSP.Periodograms.Periodogram, fmin::Real, fmax::Real)
-        
+
     ix = findall( x-> (fmin<x<fmax), P_vel.freq)
     spec = P_vel.power[ix]
     f = P_vel.freq[ix]
@@ -261,33 +259,33 @@ compute pgv, pga and rms displacement from 3 components SeisData.
 - `d_rms_mean::Float64`     : mean strength of noise displacement between drms_fmin and drms_fmax
 """
 function compute_pgvpga_drms(S::SeisData, bp_fmin::Real, bp_fmax::Real, drms_fmin::Real, drms_fmax::Real)
-        
+
     if S.n != 3
         @warn "$(S.id) does not have 3 components. skip."
         return (nothing, nothing, nothing)
     end
-    
+
     #---Preprocessing---#
     detrend!(S)
     demean!(S)
     taper!(S, t_max=180, α=0.1)
     filtfilt!(S, fl=bp_fmin, fh=bp_fmax, rt="Bandpass", dm="Butterworth")
-    
+
     #---Convert trace---#
     S_acc = convert_seis(S, units_out="m/s2", v=0);
     S_vel = convert_seis(S, units_out="m/s", v=0);
-    
+
     #---Preprocessing again for velocity and acceleration---#
     detrend!(S_acc)
     demean!(S_acc)
     taper!(S_acc, t_max=180, α=0.1)
     filtfilt!(S_acc, fl=bp_fmin, fh=bp_fmax, rt="Bandpass", dm="Butterworth")
-    
+
     detrend!(S_vel)
     demean!(S_vel)
     taper!(S_vel, t_max=180, α=0.1)
     filtfilt!(S_vel, fl=bp_fmin, fh=bp_fmax, rt="Bandpass", dm="Butterworth")
- 
+
     #---Compute acceleration and velocity magnitude---#
     acc_arr=zeros(size(S_acc[1].x, 1), 3)
     vel_arr=zeros(size(S_vel[1].x, 1), 3)
@@ -310,7 +308,7 @@ function compute_pgvpga_drms(S::SeisData, bp_fmin::Real, bp_fmax::Real, drms_fmi
     pga = maximum(S_accmag.x)
 
     #---Compute d_rms---#
-    
+
     d_rms_3comp=zeros(3)
     for i = 1:3
         N = length(S_vel[i].x)
@@ -320,10 +318,10 @@ function compute_pgvpga_drms(S::SeisData, bp_fmin::Real, bp_fmax::Real, drms_fmi
         P_vel.power[P_vel.power.<=1e-20] .= 1e-20 # avoid zero in power
         d_rms_3comp[i] = df_rms(P_vel, drms_fmin, drms_fmax)
     end
-    
+
     # take mean rms of 3 components
     d_rms_mean = mean(d_rms_3comp)
-    
+
     return (pgv, pga, d_rms_mean)
 
 end

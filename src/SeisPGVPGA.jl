@@ -1,7 +1,7 @@
 module SeisPGVPGA
 
 # module to be used over modules
-using  SeisIO, FileIO, Dates, DSP, Statistics, DataFrames, CSV, Trapz, Distributed, Plots, PlotSeis
+using  SeisIO, FileIO, Dates, DSP, Statistics, DataFrames, CSV, Trapz, Distributed
 
 export
 
