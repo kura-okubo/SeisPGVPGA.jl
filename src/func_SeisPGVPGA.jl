@@ -260,13 +260,13 @@ function compute_pgvpga_drms(S::SeisData, bp_fmin::Real, bp_fmax::Real, drms_fmi
 
     if S.n != 3
         @warn "$(S.id) does not have 3 components. skip."
-        return (nothing, nothing, nothing)
+        return (NaN, NaN, NaN)
     end
 
 	#assert data length
 	if !(length(S[1].x[:]) == length(S[2].x[:]) == length(S[3].x[:]))
 		@warn "$(S.id) data length is different between components. skip."
-		return (nothing, nothing, nothing)
+		return (NaN, NaN, NaN)
 	end
 
     #---Preprocessing---#
