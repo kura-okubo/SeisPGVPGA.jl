@@ -82,7 +82,7 @@ df_all = DataFrame(id=String[], starttime=DateTime[], endtime=DateTime[], midtim
                     PGA=Float64[], drms_mean=Float64[])
 
 for df in df_mapped
-    (!isnothing(df) && !isnan(df.PGV)) && append!(df_all, df)
+    (!isnothing(df) && !isnan(df.PGV[1])) && append!(df_all, df)
 end
 
 csvname = joinpath(InputDict["fodir"], "pgv_pga_all.csv")
@@ -92,7 +92,3 @@ printstyled("---Summary---\n"; color = :cyan, bold = true)
 println("Total time for download and process data = $(t_download)[s]")
 println("Total time for gather data = $(t_convert)[s]")
 printstyled("SeisPGVPGA has been successfully done.\n"; color = :cyan, bold = true)
-
-
-
-
